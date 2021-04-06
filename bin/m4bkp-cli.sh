@@ -23,7 +23,7 @@ clear
 # Variables Globales
 
 CONFIG_PATH=$HOME/.M4-BACKUP
-CONFIG_FILE=$CONFIG_PATH/etc/m4backup.cfg
+CONFIG_FILE=$CONFIG_PATH/etc/m4bkp.cfg
 LOG_FILE=$CONFIG_PATH/temp/m4backup.log
 
 # Funciones del programa

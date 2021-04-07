@@ -2,8 +2,8 @@
 
 
 CONFIG_PATH=$HOME/.M4-BACKUP                # Path folder application
-CONFIG_FILE=$CONFIG_PATH/etc/config.cfg     # Path Config File
-LOG_FILE=$CONFIG_PATH/temp/m4backup.log     # Path Log file
+CONFIG_FILE=$CONFIG_PATH/etc/m4b.cfg        # Path Config File
+LOG_FILE=$CONFIG_PATH/temp/m4b.log          # Path Log file
 AMARILLO=$(tput setaf 11)                   # Color Yellow
 VERDE=$(tput setaf 10)                      # Color Green
 ROJO=$(tput setaf 9)                        # Color Red
@@ -18,7 +18,7 @@ DELAY=3                                     # Number of seconds to display resul
 function do_cabecera() {
     clear
     echo $AMARILLO
-    echo "$1" | boxes -d stone -p a15v0
+    echo "$1" | boxes -d stone -p a$2v0
     echo $BLANCO
 }
 
@@ -35,14 +35,18 @@ function do_msg_err() {
     echo $BLANCO
 }
 
+do_log() {
+	fecha=`date '+%Y-%m-%d %H:%M'`
+	echo "[$fecha]:$1" |& tee -a "$LOG_FILE"
+}
+
 get_center(){
     COLS=$(tput cols)
     printf "%*s\n" "$(((${#1}+${COLS})/2))" "$1"
 }
 
 function do_about() {
-    clear
-    echo $(tput setaf 10)
+    do_cabecera "About" 24
     echo "\
 Esta aplicación permite configurar un backup en la nube
 para la M4 Motherboar. Para ello lo unico que necesita
@@ -51,10 +55,9 @@ es una cuenta MEGA.
 M4-BACKUP v$VERSION
 Copyright (C) 2021  Destroyer  dcf.maker@gmail.com
 \
-" | boxes -d stone -p a15v0
+"
     echo " "
-    read -p "Press any key to continue"
-    echo "$(tput sgr 0)"
+    read -p "Press any key to continue "
 }
 
 do_setProperty(){
@@ -62,35 +65,35 @@ do_setProperty(){
 }
 
 function do_user() {
-    do_cabecera "Change User MEGA"
+    do_cabecera "Change User MEGA" 15
     read -p "User Mega (): " NUSER
     echo $NUSER
     sleep 3
 }
 
 function do_pass() {
-    do_cabecera "Change Password MEGA"
+    do_cabecera "Change Password MEGA" 15
     read -sp "Password Mega: " NPASSWORD
     echo $NPASSWORD
     sleep 3
 }
 
 function do_localpath() {
-    do_cabecera "Change Local Path"
+    do_cabecera "Change Local Path" 15
     read -p "Local Path Backup (): " NLOCALPAHT
     echo $NLOCALPAHT
     sleep 3
 }
 
 function do_remotepath() {
-    do_cabecera "Change Remote Path (MEGA)"
+    do_cabecera "Change Remote Path (MEGA)" 15
     read -p "Remote Path MEGA (): " NREMOTEPAHT
     echo $NREMOTEPAHT
     sleep 3
 }
 
 function do_systemboot() {
-    do_cabecera "System Boot"
+    do_cabecera "System Boot" 15
     while true; do
     read -p "Start M4-Backup at system boot? (y/n) " yn
     case $yn in
@@ -105,17 +108,18 @@ done
 
 function do_menu_edit() {
     while true; do
-        do_cabecera "Configurations M4-Backup"
+        do_cabecera "Configurations" 15
+        cat $CONFIG_FILE
         read -p " Do you want to modify the settings? (y/n) " yn
         case $yn in
             [Yy]* )
                 while true; do
                 clear
                 echo $AMARILLO
-                echo 'Configurations M4-Backup' | boxes -d stone -p a15v0
+                do_cabecera "Configurations" 15
                 echo $BLANCO
 printf "\
-$(cat menu.cfg) \
+$(cat $CONFIG_PATH/etc/menu.cfg) \
 "
                 read REPLY
                 if [[ $REPLY =~ ^[0-5]$ ]]; then
@@ -156,15 +160,28 @@ $(cat menu.cfg) \
     done
 }
 
-############################
-#      Menu Principal      #
-############################
+#####################################################
+#           MENU PRINCIPAL APLICACION               #
+#####################################################
+				
+				
+# Cargamos fichero de propiedades y version
+				
+if [ -f "${CONFIG_FILE}" ]; then
+	source "${CONFIG_FILE}"
+else
+	do_log "[ERROR] El archivo de configuraciones no existe. Vuelva a reinstalar la aplicación"
+	exit 1
+fi
+
+if [ -f "${CONFIG_PATH}/var/version" ]; then
+	source "${CONFIG_PATH}/var/version"
+else
+	VERSION="0.0"
+fi
 
 while true; do
-do_cabecera "M4-BACKUP (version 1.0)"
-#echo 'M4-Backup Ver 1.0' | boxes -d stone -p a19v0
-#figlet -f standard "M4-backup" | boxes -d stone -p a19v0
-
+do_cabecera "M4-BACKUP (v$VERSION)" 15
   cat << _EOF_
  Please Select:
 
@@ -201,13 +218,11 @@ _EOF_
         ;;
     esac
   else
-    echo $ROJO
-    echo 'Invalid entry' | boxes -d stone -p a19v0
-    echo $AMARILLO
+    do_msg_err "Invalid entry"
     sleep $DELAY
   fi
 done
 clear
-echo $VERDE
-echo "Program terminated."
-echo $BLANCO
+#echo $VERDE
+#echo "Program terminated."
+#echo $BLANCO

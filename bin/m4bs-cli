@@ -2,7 +2,7 @@
 
 
 CONFIG_PATH=$HOME/.M4-BACKUP                # Path folder application
-CONFIG_FILE=$CONFIG_PATH/etc/m4b.cfg        # Path Config File
+CONFIG_FILE=$CONFIG_PATH/etc/m4bs.cfg        # Path Config File
 LOG_FILE=$CONFIG_PATH/temp/m4bs.log          # Path Log file
 DIALOG_CANCEL=1
 DIALOG_ESC=255
@@ -15,8 +15,8 @@ WIDTH=80
 
 do_log() {
 	fecha=`date '+%Y-%m-%d %H:%M'`
-	#echo "[$fecha]:$1" |& tee -a "$LOG_FILE"
-  echo "[$fecha]:$1" >> "$LOG_FILE"
+	echo "[$fecha]:$1" |& tee -a "$LOG_FILE"
+  #echo "[$fecha]:$1" >> "$LOG_FILE"
 }
 
 get_center(){
@@ -111,7 +111,7 @@ do_display_configurations(){
   dialog --title " Configuraciones actuales " \
   --ok-label "Cerrar" \
   --no-collapse \
-  --msgbox "$SALIDA" 15 30
+  --msgbox "$SALIDA" 15 60
 }
 
 do_menu_principal(){
@@ -208,7 +208,6 @@ if [ -f "${CONFIG_PATH}/var/version" ]; then
 else
 	VERSION="0.0"
 fi
-
 
 do_menu_principal
 

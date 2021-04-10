@@ -17,11 +17,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-# Variables Globales
+# Variable Globales
 
 CONFIG_PATH=$HOME/.M4-BACKUP
-CONFIG_FILE=$CONFIG_PATH/etc/m4backup.cfg
-LOG_FILE=$CONFIG_PATH/temp/m4backup.log
+CONFIG_FILE=$CONFIG_PATH/etc/m4bs.cfg
+LOG_FILE=$CONFIG_PATH/temp/m4bs.log
 
 # Funciones del programa
 
@@ -30,34 +30,13 @@ do_log() {
 	echo "[$fecha]:$1" |& tee -a "$LOG_FILE"
 }
 
-# Comprobamos si existe el fichero de propiedades
+# Paramos MEGA
 
-if [ ! -e "$CONFIG_FILE" ] ; then
-    do_log "[ERROR] El archivo de configuraciones no existe en la ruta $CONFIG_FILE"
-    exit 1
-else
-    source $CONFIG_FILE
-    do_log "[INFO ] Cargamos configuraciones $CONFIG_FILE"
-fi
-
-# Arrancamos Mega
-
-pkill -f "mega-cmd-server" # Matamos el servidor de MEGA por si estubiera bloqueando
-mega-login $USER $PASSWORD
+mega-logout | tee -a "$LOG_FILE"
 exitstatus=$?
 if [ $exitstatus = 0 ]; then
-    do_log "[INFO ] Servicio MEGA arrancado."
-    sleep 1
-    mega-sync $LOCALPATH $REMOTEPATH 
-    RET=$?
-    if [ $RET = 0 ]; then
-        do_log "[INFO ] Sincronización MEGA arrancada."
-        mega-sync | tee -a "$LOG_FILE"
-    else
-        do_log "[ERROR] $exitstatus al arrancar la sincronización."
-        exit 1
-    fi
+    do_log "[INFO ] Servicio MEGA parado."
 else
-    do_log "[ERROR] $exitstatus al arrancar el servicio MEGA."
+    do_log "[ERROR] $exitstatus al parar el servicio MEGA."
     exit 1
 fi

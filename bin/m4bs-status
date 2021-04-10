@@ -20,23 +20,24 @@
 # Variable Globales
 
 CONFIG_PATH=$HOME/.M4-BACKUP
-CONFIG_FILE=$CONFIG_PATH/etc/m4backup.cfg
-LOG_FILE=$CONFIG_PATH/temp/m4backup.log
+CONFIG_FILE=$CONFIG_PATH/etc/m4bs.cfg
+LOG_FILE=$CONFIG_PATH/temp/m4bs.log
 
 # Funciones del programa
 
 do_log() {
 	fecha=`date '+%Y-%m-%d %H:%M'`
-	echo "[$fecha]:$1" |& tee -a "$LOG_FILE"
+	echo "[$fecha]:$1" >> "$LOG_FILE"
 }
 
-# Paramos MEGA
+# Comprobamos estado de MEGA
 
-mega-logout | tee -a "$LOG_FILE"
+SALIDA=$(mega-whoami 2>&1)
 exitstatus=$?
 if [ $exitstatus = 0 ]; then
-    do_log "[INFO ] Servicio MEGA parado."
+    echo "$(tput setaf 2)ONLINE"
 else
-    do_log "[ERROR] $exitstatus al parar el servicio MEGA."
+    echo "$(tput setaf 1)OFFLINE"
     exit 1
 fi
+

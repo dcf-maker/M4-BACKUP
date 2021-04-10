@@ -3,11 +3,11 @@
 
 CONFIG_PATH=$HOME/.M4-BACKUP                # Path folder application
 CONFIG_FILE=$CONFIG_PATH/etc/m4b.cfg        # Path Config File
-LOG_FILE=$CONFIG_PATH/temp/m4b.log          # Path Log file
+LOG_FILE=$CONFIG_PATH/temp/m4bs.log          # Path Log file
 DIALOG_CANCEL=1
 DIALOG_ESC=255
-HEIGHT=15
-WIDTH=50
+HEIGHT=20
+WIDTH=80
 
 ####################
 # functions script #
@@ -28,31 +28,14 @@ function do_about() {
   dialog --title "About" \
   --no-collapse \
   --msgbox "\
- ███╗░░░███╗░░██╗██╗░░░░░░██████╗░░█████╗░░█████╗░██╗░░██╗██╗░░░██╗██████╗░
- ████╗░████║░██╔╝██║░░░░░░██╔══██╗██╔══██╗██╔══██╗██║░██╔╝██║░░░██║██╔══██╗
- ██╔████╔██║██╔╝░██║█████╗██████╦╝███████║██║░░╚═╝█████═╝░██║░░░██║██████╔╝
- ██║╚██╔╝██║███████║╚════╝██╔══██╗██╔══██║██║░░██╗██╔═██╗░██║░░░██║██╔═══╝░
- ██║░╚═╝░██║╚════██║░░░░░░██████╦╝██║░░██║╚█████╔╝██║░╚██╗╚██████╔╝██║░░░░░
- ╚═╝░░░░░╚═╝░░░░░╚═╝░░░░░░╚═════╝░╚═╝░░╚═╝░╚════╝░╚═╝░░╚═╝░╚═════╝░╚═╝░░░░░
+ +-++-++-++-++-++-++-++-++-+
+ |M||4||-||B||A||C||K||U||P|
+ +-++-++-++-++-++-++-++-++-+
 
   Esta aplicación permite configurar un backup en la nube para la M4    Motherboar. Para ello lo unico que necesita es una cuenta MEGA.
 
                                 M4-BACKUP v$VERSION
             Copyright (C) 2021  Destroyer  dcf.maker@gmail.com
-
-
-
-  __  __  _  _            ____            _____  _  __ _    _  _____  
- |  \/  || || |          |  _ \    /\    / ____|| |/ /| |  | ||  __ \ 
- | \  / || || |_  ______ | |_) |  /  \  | |     | ' / | |  | || |__) |
- | |\/| ||__   _||______||  _ <  / /\ \ | |     |  <  | |  | ||  ___/ 
- | |  | |   | |          | |_) |/ ____ \| |____ | . \ | |__| || |     
- |_|  |_|   |_|          |____//_/    \_\\_____||_|\_\ \____/ |_|     
-                                                                      
-
- +-++-++-++-++-++-++-++-++-+
- |M||4||-||B||A||C||K||U||P|
- +-++-++-++-++-++-++-++-++-+
 
                                                                       
 
@@ -136,11 +119,11 @@ do_menu_principal(){
     exec 3>&1
     selection=$(dialog \
     --backtitle "M4-Backup v$VERSION - Backup Online M4 Motherboard" \
-    --title "  M4-BACKUP  " \
+    --title "  M4-BACKUP SYSTEM  " \
     --clear \
     --ok-label "Seleccionar" \
     --cancel-label "Salir" \
-    --menu "" $HEIGHT $WIDTH 6 \
+    --menu "Status: "  $HEIGHT $WIDTH 6 \
     "1" "Información Backup" \
     "2" "Configurar Backup" \
     "3" "Arrancar M4-Backup" \

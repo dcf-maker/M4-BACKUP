@@ -27,20 +27,15 @@ LOG_FILE=$CONFIG_PATH/temp/m4bs.log
 
 do_log() {
 	fecha=`date '+%Y-%m-%d %H:%M'`
-	echo "[$fecha]:$1" >> "$LOG_FILE"
+	echo "[$fecha]:$1" >>"$LOG_FILE"
 }
 
-# Comprobamos estado de MEGA
+# Paramos MEGA
+CHECK=$(m4bs-status)
 
-SALIDA=$(mega-whoami 2>&1)
-exitstatus=$?
-if [ $exitstatus = 0 ]; then
-    #echo "$(tput setaf 2)ONLINE"
-    echo "ONLINE"
-    exit 0
+if [ "$CHECK" = "OFFLINE" ]; then
+    echo "M4-BACKUP SYSTEM no esta arrancado. Por favor arranquelo."
+    exit 57
 else
-    #echo "$(tput setaf 1)OFFLINE"
-    echo "OFFLINE"
-    exit 1
+    mega-whoami -l
 fi
-

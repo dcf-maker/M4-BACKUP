@@ -37,28 +37,35 @@ if [ ! -e "$CONFIG_FILE" ] ; then
     exit 1
 else
     source $CONFIG_FILE
-    do_log "[INFO ] Cargamos configuraciones $CONFIG_FILE"
+    #do_log "[INFO ] Cargamos configuraciones $CONFIG_FILE"
 fi
 
 # Arrancamos Mega
+CHECK=$(m4bs-status)
 
-pkill -f "mega-cmd-server" # Matamos el servidor de MEGA por si estubiera bloqueando
-mega-login $USER $PASSWORD
-exitstatus=$?
-if [ $exitstatus = 0 ]; then
-    do_log "[INFO ] Servicio MEGA arrancado."
-    sleep 1
-    mega-sync $LOCALPATH $REMOTEPATH 
-    RET=$?
-    if [ $RET = 0 ]; then
-        do_log "[INFO ] Sincronización MEGA arrancada."
-        mega-sync | tee -a "$LOG_FILE"
+if [ "$CHECK" = "OFFLINE" ]; then
+    pkill -f "mega-cmd-server" # Matamos el servidor de MEGA por si estubiera bloqueando
+    mega-login $USER $PASSWORD
+    exitstatus=$?
+    if [ $exitstatus = 0 ]; then
+        do_log "[INFO ] Servicio MEGA arrancado."
+        sleep 1
+        mega-sync $LOCALPATH $REMOTEPATH 
+        RET=$?
+        if [ $RET = 0 ]; then
+            do_log "[INFO ] Sincronizando $LOCALPATH con MEGA."
+            mega-sync | tee -a "$LOG_FILE"
+        else
+            do_log "[ERROR: $RET] al arrancar la sincronización."
+            mega-logout
+            exit $RET
+        fi
     else
-        do_log "[ERROR] $exitstatus al arrancar la sincronización."
-        mega-logout
-        exit 1
+        do_log "[ERROR: $exitstatus ] al arrancar el servicio MEGA."
+        exit $exitstatus
     fi
 else
-    do_log "[ERROR] $exitstatus al arrancar el servicio MEGA."
-    exit 1
+    echo "M4-BACKUP SYSTEM ya esta arrancado"
 fi
+
+exit 0

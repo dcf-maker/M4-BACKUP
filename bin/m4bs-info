@@ -30,6 +30,13 @@ do_log() {
 	echo "[$fecha]:$1" >>"$LOG_FILE"
 }
 
+if [ -f "${CONFIG_FILE}" ]; then
+	source "${CONFIG_FILE}"
+else
+	do_log "[ERROR] El archivo de configuraciones no existe. Vuelva a reinstalar la aplicación"
+	exit 1
+fi
+
 # Paramos MEGA
 CHECK=$(m4bs-status)
 
@@ -37,5 +44,21 @@ if [ "$CHECK" = "OFFLINE" ]; then
     echo "M4-BACKUP SYSTEM no esta arrancado. Por favor arranquelo."
     exit 57
 else
+    echo "----------------------------------------------------------------------------------"
+    echo "                   INFORMACION CONFIGURACION M4-BACKUP SYSTEM"
+    echo "----------------------------------------------------------------------------------"
+    echo ""
+    cat $CONFIG_FILE | sed "s/PASSWORD=$PASSWORD/PASSWORD=******/gi"
+    echo ""
+    echo "----------------------------------------------------------------------------------"
+    echo "                             INFORMACION BACKUP"
+    echo "----------------------------------------------------------------------------------"
+    echo ""
+    mega-sync
+    echo ""
+    echo "----------------------------------------------------------------------------------"
+    echo "                          INFORMACION CUENTA MEGA"
+    echo "----------------------------------------------------------------------------------"
+    echo ""
     mega-whoami -l
 fi

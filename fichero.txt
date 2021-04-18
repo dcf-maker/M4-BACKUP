@@ -1,1 +1,2 @@
 fichero.txt
+fichero.txt
